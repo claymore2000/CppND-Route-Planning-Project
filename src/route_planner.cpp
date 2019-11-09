@@ -81,6 +81,8 @@ RouteModel::Node *RoutePlanner::NextNode()
 {
     std::sort(open_list.begin(), open_list.end(),Compare);
     // std::cout << "NextNode: Entry sorted open_list size of " << open_list.size() << std::endl;
+
+    /* DEBUG
     if ((count > 24) && (count < 27))
     {
         for (auto tOLE : open_list)
@@ -88,9 +90,10 @@ RouteModel::Node *RoutePlanner::NextNode()
             std::cout << "\tnode " << tOLE << " g " << tOLE->g_value << " h " << tOLE->h_value << "\n";
         } 
     }
+    */
     auto nextNode = open_list.back();
     open_list.pop_back();
-    std::cout << "NextNode: returning node " << nextNode << " open_list size now " << open_list.size() << "\n";
+    // std::cout << "NextNode: returning node " << nextNode << " open_list size now " << open_list.size() << "\n";
     return nextNode;
 }
 
@@ -148,7 +151,7 @@ std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node 
     }
 
     distance *= m_Model.MetricScale(); // Multiply the distance by the scale of the map to get meters.
-    std::cout << " path_found.size() " << path_found.size() << "\n";
+    // std::cout << " path_found.size() " << path_found.size() << "\n";
 
     return path_found;
 
@@ -178,7 +181,7 @@ void RoutePlanner::AStarSearch() {
     {
         // std::cout << "AStarSearch: Enter while loop for the " << debugWhileControl << " time.\n";
         current_node = NextNode();
-        std::cout << "AStarSearch: While: " << count++ << " CN " << current_node << " EN " << end_node << " D " << current_node->distance(*end_node) <<"\n";
+        // std::cout << "AStarSearch: While: " << count++ << " CN " << current_node << " EN " << end_node << " D " << current_node->distance(*end_node) <<"\n";
 
         if (current_node == end_node) 
         {
@@ -190,7 +193,7 @@ void RoutePlanner::AStarSearch() {
             AddNeighbors(current_node);
         }
     }
-    std::cout << "ASearch (2) OLsize = " << open_list.size() << "\n";
+    std::cout << "ASearch Failed to find path to goal, path_size = " << open_list.size() << "\n";
     m_Model.path = std::vector<RouteModel::Node>{};
     return;
 }
