@@ -52,12 +52,12 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node)
       }
     else // aNeighbor is in open_list
       {
-            float tenative_gScore = nodeInOpenList->distance(*current_node);
-            if (tenative_gScore < nodeInOpenList->g_value) // If better (i.e. shorter) route to aNeighbor 
+            float tenative_gScore = aNeighbor->distance(*current_node);
+            if (tenative_gScore < aNeighbor->g_value) // If better (i.e. shorter) route to aNeighbor 
             {
-	      nodeInOpenList->parent = current_node;  // Change the parent to current node, update g and h values of Node in open_list
-	      nodeInOpenList->g_value = tenative_gScore; 
-	      nodeInOpenList->h_value = CalculateHValue(aNeighbor); // it? instead of aNeighbor?
+	      aNeighbor->parent = current_node;  // Change the parent to current node, update g and h values of Node in open_list
+	      aNeighbor->g_value = tenative_gScore; 
+	      aNeighbor->h_value = CalculateHValue(aNeighbor); // it? instead of aNeighbor?
 	    }
       }
     
