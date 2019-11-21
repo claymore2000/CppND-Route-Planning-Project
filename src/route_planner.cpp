@@ -35,11 +35,41 @@ float RoutePlanner::CalculateHValue(RouteModel::Node const *node)
 
 void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) 
 {
-    // std::cout << "AddNeighbors: open_list size BEFORE " << open_list.size() << std::endl;
-    current_node->FindNeighbors();
-    for (auto aNeighbor : current_node->neighbors)
-    {
-        if (aNeighbor->visited == false)
+  
+  // returns closest neighbor node not in closed list (not visited =  'close_list') of each node's connected road paths to current node,can be null_ptr
+  current_node->FindNeighbors(); // returns closest neighbor (not visited =  'close_list') to each node to connected road paths to current node,can be null_ptr
+
+  std::vector<RouteModel::Node *>::iterator it; // To iteratate over open_list
+
+  for (auto aNeighbor : current_node->neighbors)
+  {
+    it = find(open_list.begin(), open_list.end(), aNeighbor); // find if aNeighbor in open list
+    
+    if (it == open_list.end() ) // aNeighbor not in open_list, so add it with appropriate info
+      {
+	aNeighbor->parent = current_node;
+	aNeighbor->g_value = aNeighbor->distance(*start_node);
+	aNeighbor->h_value = CalculateHValue(aNeighbor);
+	open_list.emplace_back(aNeighbor);
+      }
+    else // aNeighbor is in open_list
+      {
+            float tenative_gScore = it->distance(*current_node);
+            if (tenative_gScore < it->g_value) // If better (i.e. shorter) route to aNeighbor 
+            {
+	      it->parent = current_node;     // Change the parent to current node, update g and h values of Node in open_list
+	      it->g_value = tenative_gScore; 
+	      it->h_value = CalculateHValue(aNeighbor); // it? instead of aNeighbor?
+	    }
+      }
+    
+    // Is aNeighbor in open_list?
+    // If not, add it to open_list, with parent as current_node, g_value or aNeighbors distance to start_node, and h_value of CalculateHValue(aNeighbor)
+    // If in open_list, is the 'new g_value' (from aNeighbor) a better (smaller) value than g_value in open_list?
+    // If yes, change g_value and h_value in open_list to values from aNeighbor ...
+    // if no, do nothing
+      /*
+      if (aNeighbor->visited == false)
         {
             aNeighbor->parent = current_node;
             aNeighbor->g_value = aNeighbor->distance(*start_node);
@@ -52,7 +82,8 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node)
             aNeighbor->visited = true;
             open_list.emplace_back(aNeighbor);
         }
-    }
+      */
+  }
 
 }
 
