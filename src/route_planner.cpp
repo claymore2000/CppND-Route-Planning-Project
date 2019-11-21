@@ -39,19 +39,16 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node)
 
   for (auto aNeighbor : current_node->neighbors)
   {
-      if (aNeighbor->visited == false)
-        {
-            aNeighbor->parent = current_node;
-            aNeighbor->g_value = aNeighbor->distance(*start_node);
-            float tenative_gScore = aNeighbor->distance(*current_node);
-            if (tenative_gScore < aNeighbor->g_value)
-            {
-                aNeighbor->g_value = tenative_gScore;
-            }
-            aNeighbor->h_value = CalculateHValue(aNeighbor);
-            aNeighbor->visited = true;
-            open_list.emplace_back(aNeighbor);
-        }
+    aNeighbor->parent = current_node;
+    aNeighbor->g_value = aNeighbor->distance(*start_node);
+    float tenative_gScore = aNeighbor->distance(*current_node);
+    if (tenative_gScore < aNeighbor->g_value)
+      {
+	aNeighbor->g_value = tenative_gScore;
+      }
+    aNeighbor->h_value = CalculateHValue(aNeighbor);
+    aNeighbor->visited = true;
+    open_list.emplace_back(aNeighbor);
   }
 
 }
@@ -76,7 +73,7 @@ RouteModel::Node *RoutePlanner::NextNode()
  
     auto nextNode = open_list.back();
     open_list.pop_back();
-    nextNode->visited = true;
+
     return nextNode;
 }
 
@@ -131,14 +128,13 @@ void RoutePlanner::AStarSearch() {
     current_node = start_node;
     current_node->g_value = 0.0f;
     current_node->h_value = CalculateHValue(current_node);
-    //current_node->visited = true;
+    current_node->visited = true;
 
     open_list.push_back(current_node);
 
 
-    while (open_list.size() > 0) // >= because very last node pulled from list below could be end_node
+    while (open_list.size() > 0) 
     {
-        // std::cout << "AStarSearch: Enter while loop for the " << debugWhileControl << " time.\n";
         current_node = NextNode();
         // std::cout << "AStarSearch: While: " << count++ << " CN " << current_node << " EN " << end_node << " D " << current_node->distance(*end_node) <<"\n";
 
