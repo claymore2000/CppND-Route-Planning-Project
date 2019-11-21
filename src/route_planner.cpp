@@ -39,13 +39,11 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node)
   // returns closest neighbor node not in closed list (not visited =  'close_list') of each node's connected road paths to current node,can be null_ptr
   current_node->FindNeighbors(); // returns closest neighbor (not visited =  'close_list') to each node to connected road paths to current node,can be null_ptr
 
-  std::vector<RouteModel::Node *>::iterator it; // To iteratate over open_list
-
   for (auto aNeighbor : current_node->neighbors)
   {
-    it = find(open_list.begin(), open_list.end(), aNeighbor); // find if aNeighbor in open list
+    auto nodeInOpenList = find(open_list.begin(), open_list.end(), aNeighbor); // find if aNeighbor in open list
     
-    if (it == open_list.end() ) // aNeighbor not in open_list, so add it with appropriate info
+    if (nodeInOpenList == open_list.end() ) // aNeighbor not in open_list, so add it with appropriate info
       {
 	aNeighbor->parent = current_node;
 	aNeighbor->g_value = aNeighbor->distance(*start_node);
@@ -54,12 +52,12 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node)
       }
     else // aNeighbor is in open_list
       {
-            float tenative_gScore = it->distance(*current_node);
-            if (tenative_gScore < it->g_value) // If better (i.e. shorter) route to aNeighbor 
+            float tenative_gScore = nodeInOpenList->distance(*current_node);
+            if (tenative_gScore < nodeInOpenList->g_value) // If better (i.e. shorter) route to aNeighbor 
             {
-	      it->parent = current_node;     // Change the parent to current node, update g and h values of Node in open_list
-	      it->g_value = tenative_gScore; 
-	      it->h_value = CalculateHValue(aNeighbor); // it? instead of aNeighbor?
+	      nodeInOpenList->parent = current_node;  // Change the parent to current node, update g and h values of Node in open_list
+	      nodeInOpenList->g_value = tenative_gScore; 
+	      nodeInOpenList->h_value = CalculateHValue(aNeighbor); // it? instead of aNeighbor?
 	    }
       }
     
