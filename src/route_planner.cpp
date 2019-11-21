@@ -2,8 +2,6 @@
 #include <algorithm>
 #include <iostream>
 
-static     int count = 1;
-
 RoutePlanner::RoutePlanner(RouteModel &model, float start_x, float start_y, float end_x, float end_y): m_Model(model) 
 {
     // Convert inputs to percentage:
@@ -13,8 +11,7 @@ RoutePlanner::RoutePlanner(RouteModel &model, float start_x, float start_y, floa
     end_y *= 0.01;
 
     start_node = &(m_Model.FindClosestNode(start_x, start_y));
-    end_node = &(model.FindClosestNode(end_x, end_y));
-    open_list.clear(); 
+    end_node = &(model.FindClosestNode(end_x, end_y)); 
 }
 
 
@@ -53,14 +50,10 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node)
             }
             aNeighbor->h_value = CalculateHValue(aNeighbor);
             aNeighbor->visited = true;
-            open_list.push_back(aNeighbor);
-        }
-        else
-        {
-            // std::cout << "AddNeighbors: neighbor " << aNeighbor << " already visited, check to see if closer\n";
+            open_list.emplace_back(aNeighbor);
         }
     }
-    // std::cout << "AddNeighbors openlist size AFTER " << open_list.size() << "\n";
+
 }
 
 
@@ -80,20 +73,10 @@ bool Compare(const RouteModel::Node *a, const RouteModel::Node * b)
 RouteModel::Node *RoutePlanner::NextNode() 
 {
     std::sort(open_list.begin(), open_list.end(),Compare);
-    // std::cout << "NextNode: Entry sorted open_list size of " << open_list.size() << std::endl;
-
-    /* DEBUG
-    if ((count > 24) && (count < 27))
-    {
-        for (auto tOLE : open_list)
-        {
-            std::cout << "\tnode " << tOLE << " g " << tOLE->g_value << " h " << tOLE->h_value << "\n";
-        } 
-    }
-    */
+ 
     auto nextNode = open_list.back();
     open_list.pop_back();
-    // std::cout << "NextNode: returning node " << nextNode << " open_list size now " << open_list.size() << "\n";
+    nextNode->visited = true;
     return nextNode;
 }
 
@@ -114,47 +97,23 @@ std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node 
     RouteModel::Node * active_node = current_node;
     bool goal_path_found = false;
 
-    //std::cout << "CFP: start\n";
-
-    while ((goal_path_found == false) && (active_node != nullptr))
+    if (current_node == nullptr)
     {
-        //std::cout << "CFP: while active_node: " << active_node << " start_node " << start_node << " end_node: " << end_node << " start_node: " << start_node << "\n";
-        //std::cout << "CFP: path size " << path_found.size() << "\n\n";
-        if (active_node == start_node)
-        {
-            // std::cout << "CFP: back at start\n";
-            goal_path_found = true;
-            //std::cout << "CFP: before final push_back\n";
-            path_found.push_back(*active_node);
-        }
-        else
-        {
-            //std::cout << "CFP: going to next node calculating distance...\n";
-            distance += active_node->distance(*(active_node->parent));
-            //std::cout << "CFP: going to next node, pushing back active node to path_found\n";
-            path_found.push_back(*active_node);
-            active_node = active_node->parent;
-            // std::cout << "CFP: looping to parent node, address of " << active_node << " distance of " << distance <<"\n";
-        }
+        return path_found;
     }
 
-    // std::cout << "CFP: out of while loop...\n";
+    while(current_node->parent != nullptr)
+    {
+        path_found.emplace_back(*current_node);
+        distance += current_node->distance(*current_node->parent);
+        current_node = current_node->parent;
+    }
 
-    if ((goal_path_found == false) || (active_node == nullptr))
-    {
-        distance = 0.0f;
-        path_found.clear();
-    }
-    else
-    {
-        std::reverse(path_found.begin(),path_found.end());
-    }
+    path_found.emplace_back(*current_node);
+    std::reverse(path_found.begin(),path_found.end());
 
     distance *= m_Model.MetricScale(); // Multiply the distance by the scale of the map to get meters.
-    // std::cout << " path_found.size() " << path_found.size() << "\n";
-
     return path_found;
-
 }
 
 
@@ -172,7 +131,7 @@ void RoutePlanner::AStarSearch() {
     current_node = start_node;
     current_node->g_value = 0.0f;
     current_node->h_value = CalculateHValue(current_node);
-    current_node->visited = true;
+    //current_node->visited = true;
 
     open_list.push_back(current_node);
 
