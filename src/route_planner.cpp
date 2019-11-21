@@ -49,7 +49,7 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node)
                 aNeighbor->g_value = tenative_gScore;
             }
             aNeighbor->h_value = CalculateHValue(aNeighbor);
-            // LBC don't mark as visited ... => aNeighbor->visited = true;
+            aNeighbor->visited = true;
             open_list.emplace_back(aNeighbor);
         }
   }
