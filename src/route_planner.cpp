@@ -41,7 +41,7 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node)
   for (auto aNeighbor : current_node->neighbors)
   {
     aNeighbor->parent = current_node;
-    aNeighbor->g_value = current_node->g_value + current_node->distance(*neighbor); // redo aNeighbor->distance(*start_node);
+    aNeighbor->g_value = current_node->g_value + current_node->distance(*aNeighbor); // redo aNeighbor->distance(*start_node);
 
     // redo float tenative_gScore = aNeighbor->distance(*current_node);
     // redo if (tenative_gScore < aNeighbor->g_value)
