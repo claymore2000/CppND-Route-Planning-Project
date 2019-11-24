@@ -14,7 +14,6 @@ RoutePlanner::RoutePlanner(RouteModel &model, float start_x, float start_y, floa
     end_node = &(model.FindClosestNode(end_x, end_y)); 
 }
 
-
 // TODO 3: Implement the CalculateHValue method.
 // Tips:
 // - You can use the distance to the end_node for the h value.
@@ -24,7 +23,6 @@ float RoutePlanner::CalculateHValue(RouteModel::Node const *node)
 {
   return node->distance(*end_node);
 }
-
 
 // TODO 4: Complete the AddNeighbors method to expand the current node by adding all unvisited neighbors to the open list.
 // Tips:
@@ -41,21 +39,15 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node)
   for (auto aNeighbor : current_node->neighbors)
   {
     aNeighbor->parent = current_node;
-    aNeighbor->g_value = current_node->g_value + current_node->distance(*aNeighbor); // redo aNeighbor->distance(*start_node);
 
-    // redo float tenative_gScore = aNeighbor->distance(*current_node);
-    // redo if (tenative_gScore < aNeighbor->g_value)
-    //redo   {
-    // redo	aNeighbor->g_value = tenative_gScore;
-    //redo   }
-    
+    // original submission bug => aNeighbor->distance(*start_node);
+    aNeighbor->g_value = current_node->g_value + current_node->distance(*aNeighbor);
     aNeighbor->h_value = CalculateHValue(aNeighbor);
     aNeighbor->visited = true;
     open_list.emplace_back(aNeighbor);
   }
 
 }
-
 
 // TODO 5: Complete the NextNode method to sort the open list and return the next node.
 // Tips:
@@ -128,12 +120,6 @@ void RoutePlanner::AStarSearch() {
     RouteModel::Node *current_node = nullptr;
 
     // TODO: Implement your solution here.
-    // redo current_node = start_node;
-    // redo current_node->g_value = 0.0f;
-    // redo current_node->h_value = CalculateHValue(current_node);
-    // redo current_node->visited = true;
-
-    // redo open_list.push_back(current_node);
    
     start_node->visited = true;
     open_list.emplace_back(start_node);
@@ -141,10 +127,6 @@ void RoutePlanner::AStarSearch() {
     while ( !open_list.empty() ) 
     {
         current_node = NextNode();
-        // std::cout << "AStarSearch: While: "
-	//          << count++ << " CN " << current_node
-	//          << " EN " << end_node
-	//          << " D " << current_node->distance(*end_node) <<"\n";
 
         if (current_node->distance(*end_node) == 0) 
         {
