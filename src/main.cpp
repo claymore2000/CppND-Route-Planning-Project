@@ -35,9 +35,10 @@ void getValidCoordinate(const std::string & prompt, float & value)
   
   while (!(std::cin) || (value < 0) || (value > 100))
     {
-      std::cout << "ERROR: invalid value for " << prompt << ", should be between 0 amd 100, inclusive/\n";
+      std::cout << "ERROR: invalid value for " << prompt << ", should be between 0 amd 100, inclusive\n";
       std::cin.clear();
       std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      std::cout << "Enter valid value (0 <= value <= 100) for variable " << prompt << ": ";
       std::cin >> value;
     }
 }
