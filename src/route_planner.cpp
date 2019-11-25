@@ -21,7 +21,8 @@ RoutePlanner::RoutePlanner(RouteModel &model, float start_x, float start_y, floa
 
 float RoutePlanner::CalculateHValue(RouteModel::Node const *node) 
 {
-  return node->distance(*end_node);
+  // The method should return the distance from the passed argument to the 'end node'
+  return (*node).distance(*end_node);  // Suggested better alternative to node->distance(*end_node);
 }
 
 // TODO 4: Complete the AddNeighbors method to expand the current node by adding all unvisited neighbors to the open list.
@@ -130,13 +131,11 @@ void RoutePlanner::AStarSearch() {
 
         if (current_node->distance(*end_node) == 0) 
         {
-            m_Model.path = ConstructFinalPath(current_node);
+	  // replaced this with line below, clarity for reader m_Model.path = ConstructFinalPath(current_node);
+            m_Model.path = ConstructFinalPath(end_node);
             return;
         }
-        else
-        {
-            AddNeighbors(current_node);
-        }
+	AddNeighbors(current_node);
     }
     std::cout << "ASearch Failed to find path to goal, path_size = " << open_list.size() << "\n";
     m_Model.path = std::vector<RouteModel::Node>{};

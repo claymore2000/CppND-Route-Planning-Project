@@ -26,24 +26,18 @@ static std::optional<std::vector<std::byte>> ReadFile(const std::string &path)
         return std::nullopt;
     return std::move(contents);
 }
+
 void getValidCoordinate(const std::string & prompt, float & value)
 {
-  bool notDone = true;
-  while (notDone)
+  std::cout << "Enter valid value (0 <= value <= 100) for variable " << prompt << ": ";
+  std::cin >> value;
+  
+  while (!(cin) || (value < 0) || (value > 100))
     {
-      std::cout << "Enter valid value for variable " << prompt << ": ";
+      std::cout << "ERROR: invalid value for " << prompt << ", should be between 0 amd 100, inclusive/\n";
+      std::cin.clear();
+      std::cin.ignore(numeric_limits<streamsize>::max(), '\n');
       std::cin >> value;
-
-      if ((0.0 >= value) || (value >= 100.0))
-	{
-	  std::cout << "ERROR: invalid value for " << prompt << ", should be between 0.0 and 100.0\n";
-	  std::cout << "Please enter a valid value\n";
-	}
-      else
-	{
-	  notDone = false;
-	}
-	  
     }
 }
 
@@ -88,7 +82,7 @@ int main(int argc, const char **argv)
     RouteModel model{osm_data};
 
     // Create RoutePlanner object and perform A* search.
-    std::cout << "start_x " << start_x << " start_y " << start_y << " end_x " << end_x << " end_y " << end_y <<"\n";
+
     RoutePlanner route_planner{model, start_x, start_y, end_x, end_y};
     route_planner.AStarSearch();
 
