@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <limits>
 #include <io2d.h>
 #include "route_model.h"
 #include "render.h"
@@ -32,11 +33,11 @@ void getValidCoordinate(const std::string & prompt, float & value)
   std::cout << "Enter valid value (0 <= value <= 100) for variable " << prompt << ": ";
   std::cin >> value;
   
-  while (!(cin) || (value < 0) || (value > 100))
+  while (!(std::cin) || (value < 0) || (value > 100))
     {
       std::cout << "ERROR: invalid value for " << prompt << ", should be between 0 amd 100, inclusive/\n";
       std::cin.clear();
-      std::cin.ignore(numeric_limits<streamsize>::max(), '\n');
+      std::cin.ignore(std::numeric_limits<streamsize>::max(), '\n');
       std::cin >> value;
     }
 }
